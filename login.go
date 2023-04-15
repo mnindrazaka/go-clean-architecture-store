@@ -23,7 +23,7 @@ type myClaims struct {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	db, err := gorm.Open(mysql.Open("root:18543@tcp(localhost:3306)/db_store"), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open("root:((root))@tcp(localhost:3306)/store"), &gorm.Config{})
 	if err != nil {
 		panic("Failed connect to databases")
 	}

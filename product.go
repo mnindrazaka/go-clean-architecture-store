@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"store/modules/categories"
 
 	"github.com/gorilla/mux"
 	"gorm.io/driver/mysql"
@@ -10,11 +11,11 @@ import (
 )
 
 type product struct {
-	Id          int      `json:"id"`
-	Nama        string   `json:"nama"`
-	Price       int      `json:"price"`
-	Category_Id int      `json:"category_id"`
-	Category    category `json:"category"`
+	Id          int                 `json:"id"`
+	Name        string              `json:"name"`
+	Price       int                 `json:"price"`
+	Category_Id int                 `json:"category_id"`
+	Category    categories.Category `json:"category"`
 }
 
 func createProduct(w http.ResponseWriter, r *http.Request) {
@@ -25,11 +26,11 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	db, err := gorm.Open(mysql.Open("root:18543@tcp(localhost:3306)/db_store"), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open("root:((root))@tcp(localhost:3306)/store"), &gorm.Config{})
 	if err != nil {
 		panic("Failed connect to databases")
 	}
-	result := db.Select("Nama", "Price", "Category_Id").Create(&product)
+	result := db.Select("Name", "Price", "Category_Id").Create(&product)
 	if result.Error != nil {
 		w.Write([]byte(result.Error.Error()))
 		return
@@ -39,7 +40,7 @@ func createProduct(w http.ResponseWriter, r *http.Request) {
 
 func getAllProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
-	db, err := gorm.Open(mysql.Open("root:18543@tcp(localhost:3306)/db_store"), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open("root:((root))@tcp(localhost:3306)/store"), &gorm.Config{})
 	if err != nil {
 		panic("Failed connect to databases")
 	}
@@ -61,7 +62,7 @@ func getProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 	vars := mux.Vars(r)
 	id := vars["id"]
-	db, err := gorm.Open(mysql.Open("root:18543@tcp(localhost:3306)/db_store"), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open("root:((root))@tcp(localhost:3306)/store"), &gorm.Config{})
 	if err != nil {
 		panic("Failed connect to databases")
 	}
@@ -92,12 +93,12 @@ func updateProduct(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
-	db, errGorm := gorm.Open(mysql.Open("root:18543@tcp(localhost:3306)/db_store"), &gorm.Config{})
+	db, errGorm := gorm.Open(mysql.Open("root:((root))@tcp(localhost:3306)/store"), &gorm.Config{})
 	if errGorm != nil {
 		panic("Failed connect to databases")
 	}
 	result := db.Model(&product{}).Where("id = ?", id).Updates(map[string]interface{}{
-		"nama":  products.Nama,
+		"name":  products.Name,
 		"price": products.Price,
 	})
 	if result.Error != nil {
@@ -111,7 +112,7 @@ func deleteProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-type", "application/json")
 	vars := mux.Vars(r)
 	id := vars["id"]
-	db, errGorm := gorm.Open(mysql.Open("root:18543@tcp(localhost:3306)/db_store"), &gorm.Config{})
+	db, errGorm := gorm.Open(mysql.Open("root:((root))@tcp(localhost:3306)/store"), &gorm.Config{})
 	if errGorm != nil {
 		panic("Failed connect to databases")
 	}
